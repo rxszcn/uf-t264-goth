@@ -38,10 +38,11 @@ func (s *Session) Authorize(provider goth.Provider, params goth.Params) (string,
 	if err != nil {
 		return "", fmt.Errorf("failed to create refresh token request: %w", err)
 	}
-	if err = p.GetAppAccessToken(); err != nil {
+	appToken, err := p.tokenValue()
+	if err != nil {
 		return "", fmt.Errorf("failed to get app access token: %w", err)
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", p.appAccessToken.Token))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", appToken))
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
 
 	resp, err := p.Client().Do(req)
